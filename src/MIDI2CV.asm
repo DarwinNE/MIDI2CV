@@ -31,65 +31,65 @@
 ;   You should have received a copy of the GNU General Public License
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PROCESSOR 16F876
+        PROCESSOR 16F876
 
 ; disable the annoying warning
 ; "Register in operand not in bank 0.
 ; Ensure bank bits are correct."
 
-ERRORLEVEL -302
+        ERRORLEVEL -302
 
-#include "p16f876.inc"
-__CONFIG 0x3F7A         ; Disable watchdog, HS oscillator,
+        #include "p16f876.inc"
+        __CONFIG 0x3F7A         ; Disable watchdog, HS oscillator,
                         ; disable LT programming
 
 ; These registers are accessible in all pages
-STORES  equ     70      ; Store status register
-STOREW  equ     71      ; Store the w register
-STOREP  equ     72      ; Store the PCLATH register
+STORES  equ     0x70    ; Store status register
+STOREW  equ     0x71    ; Store the w register
+STOREP  equ     0x72    ; Store the PCLATH register
 
 ; These registers are in bank 0
-CHANNEL equ     25      ; Channel number
-TRNSM   equ     26      ; Transmission status (See TRN section)
-RECBYTE equ     27      ; Received byte (used in interrupt)
+CHANNEL equ     0x25    ; Channel number
+TRNSM   equ     0x26    ; Transmission status (See TRN section)
+RECBYTE equ     0x27    ; Received byte (used in interrupt)
 
-ST      equ     28      ; State of the MIDI reception state machine
+ST      equ     0x28    ; State of the MIDI reception state machine
 
-DISP0   equ     20      ; First display
-DISP1   equ     21      ; Second display
-ACTDISP equ     22      ; Actual display being refreshed
-LEDST   equ     23      ; LED state
+DISP0   equ     0x20    ; First display
+DISP1   equ     0x21    ; Second display
+ACTDISP equ     0x22    ; Actual display being refreshed
+LEDST   equ     0x23    ; LED state
 
 ; Serial communication reception errors constants
 TRN_RXF equ     0       ; Error: reception buffer full
 TRN_FRM equ     1       ; Error: reception without a stop bit (frame error)
 
 ; These registers controls the buttons
-BUTTONS equ     2A
-OLD_BTN equ     2B
-ACT_BTN equ     2C
-TMP_1   equ     2D
+BUTTONS equ     0x2A
+OLD_BTN equ     0x2B
+ACT_BTN equ     0x2C
+TMP_1   equ     0x2D
 
 ; Button codes
 SET_B   equ     0
 CHNG_B  equ     1
 
 ; Delay registers
-SDR     equ     30      ; Short Delay Register
-LDR     equ     31      ; Long Delay Register
+SDR     equ     0x30    ; Short Delay Register
+LDR     equ     0x31    ; Long Delay Register
 
 ; Note being played 
-NOTE_PL equ     32
+NOTE_PL equ     0x32
 
 ; *****************************************************************************
 ;               Main Program
 ; *****************************************************************************
-        org     0000
+        org     0x0000
         goto    prg
         nop
         nop
         nop
-        org     0004
+        org     0x0004
         goto    interrupt
 
 ; Segment mapping routine (BCD to 7 segments, a bit like the CD4511)
@@ -346,8 +346,8 @@ idle
         movwf   ST
         goto    skip
 
-no_note_on movfw
-        RECBYTE
+no_note_on
+        movfw   RECBYTE
         andlw   0xF0                    ; Determine the event
         xorlw   0x80
         btfss   STATUS,Z                ; note off
